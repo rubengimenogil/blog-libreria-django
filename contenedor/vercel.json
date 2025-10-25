@@ -1,13 +1,13 @@
 {
   "version": 2,
   "functions": {
-    "contenedor/api/*.py": {
+    "api/*.py": {
       "runtime": "python3.11",
       "maxDuration": 10,
       "memory": 1024
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/contenedor/api/index.py" }
+    { "source": "/(.*)", "destination": "/api/index.py" }
   ]
 }

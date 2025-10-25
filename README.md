@@ -20,25 +20,25 @@ Guía rápida
 
 Despliegue en Vercel
 
-- Este repositorio incluye:
-  - vercel.json (version: 2) con:
-    - builds: [{ src: "contenedor/api/index.py", use: "@vercel/python" }]
-    - installCommand: pip install -r contenedor/requirements.txt
-    - buildCommand: python manage.py collectstatic --noinput
-    - rutas: /static -> staticfiles, resto -> contenedor/api/index.py
-  - Entry ASGI requerido: contenedor/api/index.py (DJANGO_SETTINGS_MODULE=blog.settings)
+- Root Directory del proyecto en Vercel: `contenedor`
+- Configuración:
+  - `contenedor/vercel.json` con:
+    - `functions: { "api/*.py": { runtime: "python3.11" } }`
+    - `rewrites` hacia `/api/index.py`
+  - Entry ASGI: `contenedor/api/index.py` (DJANGO_SETTINGS_MODULE=blog.settings)
+  - Dependencias: `contenedor/requirements.txt`
+- Importante: mantener solo una API
+  - Usa `contenedor/api/index.py`
+  - Elimina la carpeta `api/` del raíz si existe (evita duplicados)
 
 Comprobaciones
 
-- Verifica que el archivo contenedor/api/index.py exista y exponga `app = get_asgi_application()`.
-- En Vercel (Project Settings -> Build & Development Settings):
-  - Framework: Other
-  - Output Directory: vacío
-  - No overrides de Install/Build Command (si existen, pon los mismos que en vercel.json).
-- Re-deploy y revisa el log:
-  - Debe aparecer el uso de @vercel/python y la instalación desde contenedor/requirements.txt.
+- `contenedor/api/index.py` expone `app = get_asgi_application()`
+- `contenedor/requirements.txt` contiene Django y deps necesarias
+- Variables en Vercel:
+  - SECRET_KEY, DEBUG=0, DATABASE_URL, ALLOWED_HOSTS
+- Tras el deploy:
+  - No se ejecuta `collectstatic` automáticamente. Si necesitas estáticos del admin, añade WhiteNoise o un CDN.
 
 Notas
-
-- Asegúrate de que STATIC_ROOT en settings apunta a "staticfiles" para que collectstatic funcione.
-- La app de contenido es "posts"; define rutas y vistas propias (no incluidas aquí).
+- El `vercel.json` de la raíz queda como fallback (no se usa cuando el Root Directory es `contenedor`).
