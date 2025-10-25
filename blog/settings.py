@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',   # opcional en dev, no molesta en prod
     'posts'
 ]
 
@@ -165,6 +166,9 @@ STATIC_URL = '/static/'
 
 # En producción (Vercel)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Producción: archivos comprimidos con hash
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Default primary key field type
