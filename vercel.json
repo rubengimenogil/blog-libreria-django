@@ -1,14 +1,9 @@
 {
   "builds": [
-    {
-      "src": "contenedor/manage.py",
-      "use": "@vercel/python"
-    }
+    { "src": "contenedor/api/index.py", "use": "@vercel/python" }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "contenedor/manage.py"
-    }
+    { "src": "/static/(.*)", "dest": "contenedor/staticfiles/$1" },
+    { "src": "/(.*)", "dest": "contenedor/api/index.py" }
   ]
 }
