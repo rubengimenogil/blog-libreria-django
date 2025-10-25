@@ -3,7 +3,7 @@
     { "src": "contenedor/api/index.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/static/(.*)", "dest": "contenedor/staticfiles/$1" },
-    { "src": "/(.*)", "dest": "contenedor/api/index.py" }
+    { "src": "/static/(.*)", "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "dest": "staticfiles/$1" },
+    { "src": "/(.*)", "dest": "api/index.py" }
   ]
 }

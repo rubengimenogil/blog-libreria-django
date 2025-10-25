@@ -38,18 +38,13 @@ load_dotenv(BASE_DIR.parent / ".env")  # si .env está en la raíz del repo
 SECRET_KEY = os.getenv('SECRET_KEY', 'sdfgasdgwzw$z@3*jsf4rv&-*^9z7-m(n8$7q5ihxt*b)z1r%5^ww3^&ob')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
-# Si existe la variable VERCEL_URL (la crea automáticamente Vercel)
-
-#vercel_url = os.getenv("VERCEL_URL")
 vercel_url = os.getenv("VERCEL_URL")
 if vercel_url:
-    CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
     ALLOWED_HOSTS.append(vercel_url)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
+
 
 
 # Application definition
@@ -162,12 +157,6 @@ USE_TZ = True
 
 # Archivos estáticos (CSS, JS, imágenes)
 STATIC_URL = '/static/'
-
-# En desarrollo (local)
-STATICFILES_DIRS = []
-project_static_dir = BASE_DIR / "static"
-if project_static_dir.exists():
-    STATICFILES_DIRS.append(project_static_dir)
 
 # En producción (Vercel)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
