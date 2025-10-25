@@ -1,9 +1,12 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/*.py": { "runtime": "python3.11" }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.py" }
+  "version": 2,
+  "builds": [
+    { "src": "contenedor/api/index.py", "use": "@vercel/python" }
+  ],
+  "installCommand": "pip install -r contenedor/requirements.txt",
+  "buildCommand": "python manage.py collectstatic --noinput",
+  "routes": [
+    { "src": "/static/(.*)", "dest": "staticfiles/$1" },
+    { "src": "/(.*)", "dest": "contenedor/api/index.py" }
   ]
 }

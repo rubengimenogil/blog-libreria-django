@@ -20,16 +20,12 @@ Guía rápida
 
 Despliegue en Vercel
 
-- Root Directory del proyecto en Vercel: `contenedor`
-- Configuración:
-  - `contenedor/vercel.json` con:
-    - `functions: { "api/*.py": { runtime: "python3.11" } }`
-    - `rewrites` hacia `/api/index.py`
-  - Entry ASGI: `contenedor/api/index.py` (DJANGO_SETTINGS_MODULE=blog.settings)
-  - Dependencias: `contenedor/requirements.txt`
-- Importante: mantener solo una API
-  - Usa `contenedor/api/index.py`
-  - Elimina la carpeta `api/` del raíz si existe (evita duplicados)
+- Configuración (vercel.json en la raíz):
+  - builds: [{ src: "contenedor/api/index.py", use: "@vercel/python" }]
+  - installCommand: pip install -r contenedor/requirements.txt
+  - buildCommand: python manage.py collectstatic --noinput
+  - rutas: /static -> staticfiles y resto -> contenedor/api/index.py
+- Si usas Root Directory=contenedor, deja un único vercel.json (o replica el anterior dentro de contenedor/) y elimina el duplicado para evitar conflictos.
 
 Comprobaciones
 
