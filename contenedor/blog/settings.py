@@ -164,7 +164,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # En desarrollo (local)
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = []
+project_static_dir = BASE_DIR / "static"
+if project_static_dir.exists():
+    STATICFILES_DIRS.append(project_static_dir)
 
 # En producción (Vercel)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
