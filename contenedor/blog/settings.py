@@ -44,7 +44,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Si existe la variable VERCEL_URL (la crea automáticamente Vercel)
 
 #vercel_url = os.getenv("VERCEL_URL")
-vercel_url = os.getenv("VERCEL_URL", "https://blog-libreria-django.vercel.app/")
+vercel_url = os.getenv("VERCEL_URL")
 if vercel_url:
     CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
     ALLOWED_HOSTS.append(vercel_url)
