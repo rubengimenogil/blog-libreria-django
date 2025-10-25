@@ -6,9 +6,6 @@
       "memory": 1024
     }
   },
-  "builds": [
-    { "src": "contenedor/api/index.py", "use": "@vercel/python" }
-  ],
   "installCommand": "pip install -r contenedor/requirements.txt",
   "buildCommand": "python manage.py collectstatic --noinput",
   "routes": [
