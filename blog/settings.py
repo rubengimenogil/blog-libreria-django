@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Carga .env desde la raíz del repo o desde BASE_DIR
-load_dotenv(BASE_DIR.parent / ".env")  # si .env está en la raíz del repo
+load_dotenv(BASE_DIR / ".env")  # si .env está en la raíz del repo
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

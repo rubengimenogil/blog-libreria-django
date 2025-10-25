@@ -1,1 +1,4 @@
--r contenedor/requirements.txt
+django==5.2.7
+dj-database-url
+psycopg2-binary
+python-dotenv
