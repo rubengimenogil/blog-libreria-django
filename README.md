@@ -21,24 +21,22 @@ Guía rápida
 Despliegue en Vercel
 
 - Este repositorio incluye:
-  - vercel.json con:
+  - vercel.json (version: 2) con:
+    - builds: [{ src: "contenedor/api/index.py", use: "@vercel/python" }]
     - installCommand: pip install -r contenedor/requirements.txt
     - buildCommand: python manage.py collectstatic --noinput
     - rutas: /static -> staticfiles, resto -> contenedor/api/index.py
-  - Entry ASGI: contenedor/api/index.py (DJANGO_SETTINGS_MODULE=blog.settings)
+  - Entry ASGI requerido: contenedor/api/index.py (DJANGO_SETTINGS_MODULE=blog.settings)
 
-Pasos
+Comprobaciones
 
-1) Importar repo en Vercel.
-2) Variables de entorno en Vercel (Project Settings -> Environment Variables):
-   - SECRET_KEY
-   - DEBUG=0
-   - DATABASE_URL=postgres://... (por ejemplo, Neon con sslmode=require)
-   - ALLOWED_HOSTS=blog-libreria-django.vercel.app,localhost,127.0.0.1
-3) Deploy. Tras el primer deploy, ejecutar migraciones:
-   - Opcionalmente con Vercel CLI: vercel env pull && vercel build
-   - O bien correr migrate localmente apuntando a la misma DATABASE_URL.
-4) Acceder a https://<tu-dominio>.vercel.app/
+- Verifica que el archivo contenedor/api/index.py exista y exponga `app = get_asgi_application()`.
+- En Vercel (Project Settings -> Build & Development Settings):
+  - Framework: Other
+  - Output Directory: vacío
+  - No overrides de Install/Build Command (si existen, pon los mismos que en vercel.json).
+- Re-deploy y revisa el log:
+  - Debe aparecer el uso de @vercel/python y la instalación desde contenedor/requirements.txt.
 
 Notas
 
