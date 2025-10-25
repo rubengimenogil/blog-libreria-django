@@ -37,7 +37,11 @@ load_dotenv(BASE_DIR / ".env")  # si .env está en la raíz del repo
 # --- Seguridad ---
 SECRET_KEY = os.getenv('SECRET_KEY', 'sdfgasdgwzw$z@3*jsf4rv&-*^9z7-m(n8$7q5ihxt*b)z1r%5^ww3^&ob')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+# hosts por defecto seguros para local + vercel
+DEFAULT_HOSTS = ["127.0.0.1", "localhost", ".vercel.app", "blog-libreria-django.vercel.app"]
+
+# permite override por env (coma-separado)
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", ",".join(DEFAULT_HOSTS)).split(",")
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
 vercel_url = os.getenv("VERCEL_URL")
