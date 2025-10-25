@@ -1,23 +1,19 @@
-{% load static %}
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Blog Literario</title>
-    <link rel="stylesheet" href="{% static 'posts/style.css' %}">
-</head>
-<body>
+  <head><meta charset="utf-8"><title>Reseñas Literarias</title></head>
+  <body>
     <h1>Reseñas Literarias</h1>
-
-    {% for post in posts %}
-    <div class="article">
-        <h2>{{ post.title }}</h2>
-        <small>Publicado el {{ post.published_date|date:"d/m/Y H:i" }}</small>
-        <p>{{ post.content }}</p>
-    </div>
-    {% empty %}
-    <p>No hay publicaciones todavía.</p>
-    {% endfor %}
-</body>
+    {% if posts %}
+      {% for p in posts %}
+        <article>
+          <h2>{{ p.title }}</h2>
+          <small>{{ p.published_at|date:"d/m/Y H:i" }}</small>
+          <p>{{ p.content|linebreaks }}</p>
+          <hr>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p>No hay publicaciones todavía.</p>
+    {% endif %}
+  </body>
 </html>

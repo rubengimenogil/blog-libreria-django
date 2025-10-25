@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Post
 
-def post_list(request):
-    posts = Post.objects.all().order_by('-published_date')
-    return render(request, 'posts/index.html', {'posts': posts})
+def home(request):
+    posts = Post.objects.all()  # ya viene ordenado por Meta.ordering
+    return render(request, "home.html", {"posts": posts})
