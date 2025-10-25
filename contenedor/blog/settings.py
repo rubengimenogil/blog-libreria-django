@@ -15,11 +15,13 @@ from pathlib import Path
 #librerias externas
 import os
 import dj_database_url
-
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Carga .env desde la raíz del repo o desde BASE_DIR
+load_dotenv(BASE_DIR.parent / ".env")  # si .env está en la raíz del repo
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -102,13 +104,23 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # }
 
 # --- Base de datos: PostgreSQL (Neon) ---
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,         # pooling de conexiones
-        ssl_require=True          # SSL obligatorio (Neon lo requiere)
-    )
-}
+db_url = os.getenv("DATABASE_URL")
+if db_url:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=db_url,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    # Fallback local si te quedas sin DATABASE_URL
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
