@@ -1,0 +1,26 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 40px;
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+}
+
+.article {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.article h2 {
+  color: #2980b9;
+}
+
+.article small {
+  color: #888;
+}
