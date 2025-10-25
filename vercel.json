@@ -6,7 +6,7 @@
   "installCommand": "pip install -r contenedor/requirements.txt",
   "buildCommand": "python manage.py collectstatic --noinput",
   "routes": [
-    { "src": "/static/(.*)", "dest": "staticfiles/$1" },
-    { "src": "/(.*)", "dest": "contenedor/api/index.py" }
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/(.*)", "dest": "api/index.py" }
   ]
 }
