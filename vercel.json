@@ -1,9 +1,18 @@
 {
+  "functions": {
+    "contenedor/api/index.py": {
+      "runtime": "python3.11",
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
   "builds": [
     { "src": "contenedor/api/index.py", "use": "@vercel/python" }
   ],
+  "installCommand": "pip install -r contenedor/requirements.txt",
+  "buildCommand": "python manage.py collectstatic --noinput",
   "routes": [
     { "src": "/static/(.*)", "dest": "staticfiles/$1" },
-    { "src": "/(.*)", "dest": "api/index.py" }
+    { "src": "/(.*)", "dest": "contenedor/api/index.py" }
   ]
 }
