@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'posts'
 ]
 
 MIDDLEWARE = [
@@ -159,8 +160,15 @@ USE_TZ = True
 #STATIC_URL = 'static/'
 # --- Archivos estáticos ---
 
-STATIC_URL = 'static/'
+# Archivos estáticos (CSS, JS, imágenes)
+STATIC_URL = '/static/'
+
+# En desarrollo (local)
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# En producción (Vercel)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

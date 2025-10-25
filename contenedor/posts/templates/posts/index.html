@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Literario</title>
+    <link rel="stylesheet" href="{% static 'posts/style.css' %}">
+</head>
+<body>
+    <h1>Reseñas Literarias</h1>
+
+    {% for post in posts %}
+    <div class="article">
+        <h2>{{ post.title }}</h2>
+        <small>Publicado el {{ post.published_date|date:"d/m/Y H:i" }}</small>
+        <p>{{ post.content }}</p>
+    </div>
+    {% empty %}
+    <p>No hay publicaciones todavía.</p>
+    {% endfor %}
+</body>
+</html>
