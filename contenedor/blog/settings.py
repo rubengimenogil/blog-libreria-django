@@ -43,7 +43,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Si existe la variable VERCEL_URL (la crea automáticamente Vercel)
 
-vercel_url = os.getenv("VERCEL_URL")
+#vercel_url = os.getenv("VERCEL_URL")
+vercel_url = "psql 'postgresql://neondb_owner:npg_be5lrFIX4uzJ@ep-holy-surf-abfn8u2n-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
 if vercel_url:
     CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
     ALLOWED_HOSTS.append(vercel_url)

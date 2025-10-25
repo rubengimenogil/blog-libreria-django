@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "contenedor/manage.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "contenedor/manage.py"
+    }
+  ]
+}
