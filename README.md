@@ -7,7 +7,7 @@ Guía rápida
   - Variables en `.env`: SECRET_KEY, DEBUG, DATABASE_URL, (opcional) ALLOWED_HOSTS
 
 - Instalar dependencias
-  - pip install -r contenedor/requirements.txt
+  - pip install -r requirements.txt
 
 - Migraciones y superusuario
   - python manage.py migrate
@@ -21,20 +21,17 @@ Guía rápida
 Despliegue en Vercel
 
 - Configuración (vercel.json en la raíz):
-  - builds: [{ src: "contenedor/api/index.py", use: "@vercel/python" }]
-  - installCommand: pip install -r contenedor/requirements.txt
+  - builds: [{ src: "api/index.py", use: "@vercel/python" }]
+  - installCommand: pip install -r requirements.txt
   - buildCommand: python manage.py collectstatic --noinput
-  - rutas: /static -> staticfiles y resto -> contenedor/api/index.py
-- Si usas Root Directory=contenedor, deja un único vercel.json (o replica el anterior dentro de contenedor/) y elimina el duplicado para evitar conflictos.
-
-Comprobaciones
-
-- `contenedor/api/index.py` expone `app = get_asgi_application()`
-- `contenedor/requirements.txt` contiene Django y deps necesarias
-- Variables en Vercel:
-  - SECRET_KEY, DEBUG=0, DATABASE_URL, ALLOWED_HOSTS
-- Tras el deploy:
-  - No se ejecuta `collectstatic` automáticamente. Si necesitas estáticos del admin, añade WhiteNoise o un CDN.
+  - rutas: /static -> staticfiles y resto -> api/index.py
+- Entry ASGI: api/index.py (DJANGO_SETTINGS_MODULE=blog.settings)
+- Requisitos:
+  - requirements.txt en la raíz con dependencias de Django
+  - STATIC_ROOT en settings -> BASE_DIR / "staticfiles"
+  - Variables en Vercel: SECRET_KEY, DEBUG=0, DATABASE_URL, ALLOWED_HOSTS
 
 Notas
-- El `vercel.json` de la raíz queda como fallback (no se usa cuando el Root Directory es `contenedor`).
+- El aviso “Due to builds existing... Settings will not apply” es normal cuando hay `builds` en vercel.json; se usarán los comandos definidos en el archivo.
+- Mantén un único vercel.json (el de la raíz) y elimina otros para evitar conflictos.
+- Asegúrate de que `api/index.py` expone `app = get_asgi_application()` y `STATIC_ROOT` apunta a `staticfiles`.
