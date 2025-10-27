@@ -68,6 +68,21 @@ jobs:
           check_paths "$SMOKE_BASE_URL" mandatory "${mandatory[@]}"
           check_paths "$SMOKE_BASE_URL" optional  "${optional[@]}"
 
+          # Verificar CSS enlazado en la home (best-effort)
+          echo "Checking linked CSS from /"
+          html=$(curl -sSL --connect-timeout 5 --max-time 12 "$SMOKE_BASE_URL/")
+          css=$(echo "$html" | grep -oE 'href="/[^"]+\.css"' | head -n1 | sed -E 's/^href="(.*)"$/\1/')
+          if [ -n "$css" ]; then
+            code=$(curl_code "$SMOKE_BASE_URL$css")
+            if [ "$code" = "200" ]; then
+              echo "OK CSS $css (200)"
+            else
+              echo "Warning: CSS $css responded $code" >&2
+            fi
+          else
+            echo "Warning: no CSS link found on homepage" >&2
+          fi
+
           if [ "$FAIL" = "1" ]; then
             echo "One or more mandatory endpoints failed" >&2
             exit 1
@@ -166,6 +181,21 @@ jobs:
 
           check_paths "$PREVIEW_BASE" mandatory "${mandatory[@]}"
           check_paths "$PREVIEW_BASE" optional  "${optional[@]}"
+
+          # Verificar CSS enlazado en la home (best-effort)
+          echo "Checking linked CSS from /"
+          html=$(curl -sSL --connect-timeout 5 --max-time 12 "$PREVIEW_BASE/")
+          css=$(echo "$html" | grep -oE 'href="/[^"]+\.css"' | head -n1 | sed -E 's/^href="(.*)"$/\1/')
+          if [ -n "$css" ]; then
+            code=$(curl_code "$PREVIEW_BASE$css")
+            if [ "$code" = "200" ]; then
+              echo "OK CSS $css (200)"
+            else
+              echo "Warning: CSS $css responded $code" >&2
+            fi
+          else
+            echo "Warning: no CSS link found on homepage" >&2
+          fi
 
           if [ "$FAIL" = "1" ]; then
             echo "One or more mandatory endpoints failed" >&2
