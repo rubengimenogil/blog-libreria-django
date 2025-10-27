@@ -93,7 +93,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blog.wsgi.application'
+#WSGI_APPLICATION = 'blog.wsgi.application'
+
+WSGI_APPLICATION = "api.wsgi.app"
 
 
 # Database
@@ -139,12 +141,14 @@ if db_url:
     }
 else:
     # Fallback local si te quedas sin DATABASE_URL
+    # En Vercel, el FS es de solo lectura salvo /tmp
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": "/tmp/db.sqlite3",  # ruta temporal segura en Vercel
         }
     }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
