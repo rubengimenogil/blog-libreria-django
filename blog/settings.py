@@ -41,15 +41,9 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # hosts por defecto seguros para local + vercel
 DEFAULT_HOSTS = ["127.0.0.1", "localhost", ".vercel.app", "blog-libreria-django.vercel.app"]
 
-# permite override por env (coma-separado)
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", ",".join(DEFAULT_HOSTS)).split(",")
+# permite override por env (coma-separado)ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
-
-vercel_url = os.getenv("VERCEL_URL")
-if vercel_url:
-    ALLOWED_HOSTS.append(vercel_url)
-    CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
-
 
 
 # Application definition
