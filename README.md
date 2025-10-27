@@ -35,3 +35,44 @@ Notas
 - El aviso “Due to builds existing... Settings will not apply” es normal cuando hay `builds` en vercel.json; se usarán los comandos definidos en el archivo.
 - Mantén un único vercel.json (el de la raíz) y elimina otros para evitar conflictos.
 - Asegúrate de que `api/index.py` expone `app = get_asgi_application()` y `STATIC_ROOT` apunta a `staticfiles`.
+
+## Ejercicio 1 — Prototipo funcional
+
+Este repo implementa el prototipo solicitado:
+
+1) Modelo de datos (`posts/models.py`)
+- `Post(title, content, published_date)` con orden por defecto más recientes primero (`Meta.ordering = ["-published_date"]`).
+
+2) Vista personalizada (`posts/views.py`)
+- `post_list(request)` consulta los posts y ordena por `-published_date`.
+
+3) Plantilla visual (`posts/templates/posts/index.html`)
+- Muestra dinámicamente título, contenido y fecha; incluye CSS en `posts/static/post/style.css`.
+
+4) Sistema de rutas (`blog/urls.py` y `posts/urls.py`)
+- La home (`/`) apunta a `post_list`.
+- Endpoints de salud: `/healthz` (runtime) y `/db-healthz/` (BD).
+
+### Datos de ejemplo
+
+Puedes cargar 3 publicaciones de muestra:
+
+```pwsh
+python manage.py loaddata posts/fixtures/sample_posts.json
+```
+
+### Tests mínimos
+
+```pwsh
+python manage.py test posts
+```
+
+Cubren: `__str__`, orden por defecto y renderizado/orden en la vista de índice.
+
+### Estructura mínima relevante
+
+- `api/index.py` → ASGI para Vercel
+- `api/healthz.py` → health sin BD
+- `blog/settings.py` → config, BD (Neon via DATABASE_URL), estáticos
+- `posts/` → modelo, admin, vistas, urls, templates, static, fixtures y tests
+- `staticfiles/` → generado por `collectstatic` (no versionado)

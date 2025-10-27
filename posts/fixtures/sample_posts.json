@@ -1,0 +1,29 @@
+[
+  {
+    "model": "posts.post",
+    "pk": 1,
+    "fields": {
+      "title": "Bienvenida al blog",
+      "content": "Este es el primer post de ejemplo para el prototipo.",
+      "published_date": "2025-10-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 2,
+    "fields": {
+      "title": "Evento: firma de libros",
+      "content": "Anunciamos una firma con autores locales el próximo sábado.",
+      "published_date": "2025-10-15T18:30:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 3,
+    "fields": {
+      "title": "Reseña: El nombre del viento",
+      "content": "Una reseña breve destacando la narrativa y el ritmo.",
+      "published_date": "2025-10-20T09:15:00Z"
+    }
+  }
+]

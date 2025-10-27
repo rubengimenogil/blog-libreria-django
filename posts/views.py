@@ -4,6 +4,8 @@ from django.db import connection
 from .models import Post
 
 def post_list(request):
+    # Consulta las entradas y aplica orden cronológico inverso (más nuevas primero).
+    # El modelo ya define Meta.ordering, pero mantenemos el order_by explícito por claridad.
     posts = Post.objects.all().order_by('-published_date')
     return render(request, 'posts/index.html', {'posts': posts})
 
