@@ -10,15 +10,17 @@ on:
 jobs:
   smoke-production:
     name: Smoke (Production URL)
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SMOKE_BASE_URL != '' }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    env:
+      SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
+      HAS_SMOKE: ${{ secrets.SMOKE_BASE_URL != '' }}
     steps:
       - name: Hit endpoints with retries
-        env:
-          BASE: ${{ secrets.SMOKE_BASE_URL }}
+        if: ${{ env.HAS_SMOKE == 'true' }}
         run: |
           set -e
-          echo "Base: $BASE"
+          echo "Base: $SMOKE_BASE_URL"
           FAIL=0
           # Obligatorios y opcionales
           mandatory=("/" "/db-healthz/")
@@ -31,10 +33,10 @@ jobs:
               echo "Probing $label$path ($mode)"
               ok=0
               for i in {1..10}; do
-                code=$(curl -s -o /dev/null -w "%{http_code}" "$label$path" || true)
+                code=$(curl -s -o /dev/null -w "%{http_code}" "$SMOKE_BASE_URL$path" || true)
                 if [ "$code" = "200" ]; then
                   echo "OK $path (200)"
-                  curl -s "$label$path" | head -c 300 || true
+                  curl -s "$SMOKE_BASE_URL$path" | head -c 300 || true
                   ok=1
                   break
                 fi
@@ -51,28 +53,35 @@ jobs:
             done
           }
 
-          check_paths "$BASE" mandatory "${mandatory[@]}"
-          check_paths "$BASE" optional  "${optional[@]}"
+          check_paths "$SMOKE_BASE_URL" mandatory "${mandatory[@]}"
+          check_paths "$SMOKE_BASE_URL" optional  "${optional[@]}"
 
           if [ "$FAIL" = "1" ]; then
             echo "One or more mandatory endpoints failed" >&2
             exit 1
           fi
+      - name: Skip production smoke (no SMOKE_BASE_URL)
+        if: ${{ env.HAS_SMOKE != 'true' }}
+        run: echo "SMOKE_BASE_URL not set; skipping production smoke."
 
   smoke-preview-vercel:
     name: Smoke (Vercel Preview)
-    if: ${{ github.event_name == 'pull_request' }}
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+      HAS_VERCEL: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_PROJECT_ID != '' }}
     steps:
       - name: Install jq
+        if: ${{ env.HAS_VERCEL == 'true' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
       - name: Resolve preview URL from Vercel API
+        if: ${{ env.HAS_VERCEL == 'true' }}
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
           GITHUB_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
@@ -97,6 +106,7 @@ jobs:
           echo "PREVIEW_BASE=https://$url" >> $GITHUB_ENV
           echo "Resolved preview: https://$url"
       - name: Hit endpoints with retries
+        if: ${{ env.HAS_VERCEL == 'true' }}
         run: |
           set -e
           echo "Base: $PREVIEW_BASE"
@@ -138,3 +148,6 @@ jobs:
             echo "One or more mandatory endpoints failed" >&2
             exit 1
           fi
+      - name: Skip preview smoke (missing Vercel secrets)
+        if: ${{ env.HAS_VERCEL != 'true' }}
+        run: echo "VERCEL_TOKEN/VERCEL_PROJECT_ID not set; skipping preview smoke."
