@@ -60,8 +60,11 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Django static build output
-#staticfiles/
+# Django static build output (generado por collectstatic en Vercel)
+staticfiles/
+
+# Vercel CLI local data
+.vercel/
 
 # Flask stuff:
 instance/
