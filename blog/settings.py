@@ -15,6 +15,7 @@ from pathlib import Path
 #librerias externas
 import os
 import dj_database_url
+from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -106,11 +107,32 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # }
 
 # --- Base de datos: PostgreSQL (Neon) ---
+
+def _sanitize_db_url(u: str) -> str:
+    """Elimina parámetros problemáticos (p.ej., channel_binding) y asegura sslmode=require.
+
+    Algunos entornos (como las funciones de Vercel) pueden traer libpq sin soporte
+    para channel binding. En ese caso, un `channel_binding=require` en el DSN puede
+    provocar errores de conexión (500) al hacer queries.
+    """
+    try:
+        p = urlparse(u)
+        qs = dict(parse_qsl(p.query, keep_blank_values=True))
+        qs.pop("channel_binding", None)  # quitar si viene en la URL
+        # Asegura sslmode=require salvo que ya esté indicado explícitamente
+        qs.setdefault("sslmode", "require")
+        new_q = urlencode(qs)
+        return urlunparse(p._replace(query=new_q))
+    except Exception:
+        return u  # fallback conservador
+
+
 db_url = os.getenv("DATABASE_URL")
 if db_url:
+    safe_url = _sanitize_db_url(db_url)
     DATABASES = {
-        "default": dj_database_url.config(
-            default=db_url,
+        "default": dj_database_url.parse(
+            safe_url,
             conn_max_age=600,
             ssl_require=True,
         )

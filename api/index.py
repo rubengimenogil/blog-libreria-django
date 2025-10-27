@@ -4,9 +4,9 @@ import sys
 from pathlib import Path
 
 # Asegura que la raíz del repo está en PYTHONPATH
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+BASE_DIR = Path(__file__).resolve().parents[1]
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 # Proyecto Django (ya creado): "blog"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "blog.settings")
