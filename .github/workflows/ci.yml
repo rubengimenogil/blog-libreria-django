@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  tests-sqlite:
+    name: Tests (SQLite default)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Django tests (SQLite)
+        env:
+          SECRET_KEY: dummy-ci-secret
+          DEBUG: 'False'
+          # fuerza SQLite en tests
+          USE_POSTGRES_FOR_TESTS: '0'
+        run: |
+          python manage.py test --noinput -v 2
+
+  tests-postgres:
+    name: Tests (Postgres via Neon) [optional]
+    if: ${{ secrets.NEON_TEST_DATABASE_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Django tests (Postgres)
+        env:
+          SECRET_KEY: dummy-ci-secret
+          DEBUG: 'False'
+          DATABASE_URL: ${{ secrets.NEON_TEST_DATABASE_URL }}
+          USE_POSTGRES_FOR_TESTS: '1'
+        run: |
+          # Nota: en Neon, crea una base/branch dedicada para tests y dale permisos
+          # Usamos --keepdb para evitar crear/eliminar la BD de test en cada ejecución
+          python manage.py test --noinput -v 2 --keepdb

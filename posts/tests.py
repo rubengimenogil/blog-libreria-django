@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 from .models import Post
 
 
@@ -9,8 +11,14 @@ class PostModelTest(TestCase):
 		self.assertEqual(str(p), "t")
 
 	def test_default_ordering_desc_by_date(self):
+		# Creamos dos posts y ajustamos explícitamente las fechas para evitar
+		# empates de timestamp en bases como SQLite (resolución por segundo).
 		p1 = Post.objects.create(title="p1", content="c1")
 		p2 = Post.objects.create(title="p2", content="c2")
+		p1.published_date = timezone.now() - timedelta(minutes=1)
+		p1.save(update_fields=["published_date"])
+		p2.published_date = timezone.now()
+		p2.save(update_fields=["published_date"])
 		self.assertEqual(list(Post.objects.all()), [p2, p1])
 
 

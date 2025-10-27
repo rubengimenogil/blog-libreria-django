@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import sys
 
 #librerias externas
 import os
@@ -194,3 +195,18 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- Tests: por defecto SQLite; Postgres opcional con variable de entorno ---
+# Algunos proveedores gestionados (como Neon) pueden mantener sesiones abiertas
+# que impiden el DROP DATABASE del entorno de test. Para que los tests sean
+# rápidos y deterministas, usamos SQLite por defecto.
+# Si necesitas probar contra Postgres en CI, exporta USE_POSTGRES_FOR_TESTS=1
+# y proporciona DATABASE_URL apuntando a una base o rama de Neon específica
+# para tests.
+IS_TESTING = any(arg in sys.argv for arg in ["test", "pytest"])  # soporte pytest/django test
+USE_PG_FOR_TESTS = os.getenv("USE_POSTGRES_FOR_TESTS", "").lower() in {"1", "true", "yes", "on"}
+if IS_TESTING and not USE_PG_FOR_TESTS:
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "test.sqlite3",  # archivo local para tests
+    }

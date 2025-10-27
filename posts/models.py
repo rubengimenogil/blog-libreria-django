@@ -15,7 +15,9 @@ class Post(models.Model):
     published_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-published_date"]  # orden por defecto: más recientes primero
+        # Orden por defecto: más recientes primero; si hay empates de timestamp,
+        # desempatamos por ID descendente para una lista estable.
+        ordering = ["-published_date", "-id"]
 
     def __str__(self) -> str:  # pragma: no cover - trivial
         return self.title
