@@ -26,14 +26,26 @@ jobs:
           mandatory=("/" "/db-healthz/")
           optional=("/healthz" "/api/healthz")
 
+          curl_code() {
+            local url="$1"
+            local code
+            # -L sigue redirecciones; tiempos para evitar bloqueos largos
+            code=$(curl -sSL --connect-timeout 5 --max-time 12 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
+            if [ "$code" = "000" ]; then
+              echo "curl error -> $(cat curl.err | tail -n 1)" >&2 || true
+            fi
+            rm -f curl.err || true
+            echo "$code"
+          }
+
           check_paths() {
             local label="$1"; shift
             local mode="$1"; shift  # "mandatory" o "optional"
             for path in "$@"; do
               echo "Probing $label$path ($mode)"
               ok=0
-              for i in {1..10}; do
-                code=$(curl -s -o /dev/null -w "%{http_code}" "$SMOKE_BASE_URL$path" || true)
+              for i in {1..12}; do
+                code=$(curl_code "$SMOKE_BASE_URL$path")
                 if [ "$code" = "200" ]; then
                   echo "OK $path (200)"
                   curl -s "$SMOKE_BASE_URL$path" | head -c 300 || true
@@ -41,7 +53,7 @@ jobs:
                   break
                 fi
                 echo "Attempt $i: $code -> retrying..."
-                sleep 6
+                sleep 5
               done
               if [ "$ok" = "0" ] && [ "$mode" = "mandatory" ]; then
                 echo "Endpoint $path did not return 200 after retries (mandatory)" >&2
@@ -114,6 +126,17 @@ jobs:
           mandatory=("/" "/db-healthz/")
           optional=("/healthz" "/api/healthz")
 
+          curl_code() {
+            local url="$1"
+            local code
+            code=$(curl -sSL --connect-timeout 5 --max-time 12 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
+            if [ "$code" = "000" ]; then
+              echo "curl error -> $(cat curl.err | tail -n 1)" >&2 || true
+            fi
+            rm -f curl.err || true
+            echo "$code"
+          }
+
           check_paths() {
             local label="$1"; shift
             local mode="$1"; shift
@@ -121,7 +144,7 @@ jobs:
               echo "Probing $label$path ($mode)"
               ok=0
               for i in {1..20}; do
-                code=$(curl -s -o /dev/null -w "%{http_code}" "$label$path" || true)
+                code=$(curl_code "$label$path")
                 if [ "$code" = "200" ]; then
                   echo "OK $path (200)"
                   curl -s "$label$path" | head -c 300 || true
@@ -129,7 +152,7 @@ jobs:
                   break
                 fi
                 echo "Attempt $i: $code -> retrying..."
-                sleep 9
+                sleep 8
               done
               if [ "$ok" = "0" ] && [ "$mode" = "mandatory" ]; then
                 echo "Endpoint $path did not return 200 after retries (mandatory)" >&2
