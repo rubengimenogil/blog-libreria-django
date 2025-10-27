@@ -1,7 +1,8 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/index.py", "use": "@vercel/python" }
+    { "src": "api/index.py", "use": "@vercel/python" },
+    { "src": "api/healthz.py", "use": "@vercel/python" }
   ],
   "installCommand": "pip install -r requirements.txt",
   "buildCommand": "python manage.py collectstatic --noinput",
