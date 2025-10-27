@@ -7,6 +7,7 @@
   "buildCommand": "python manage.py collectstatic --noinput",
   "routes": [
     { "src": "/static/(.*)", "dest": "staticfiles/$1" },
+    { "src": "/healthz/?", "dest": "api/healthz.py" },
     { "src": "/(.*)", "dest": "api/index.py" }
   ]
 }
