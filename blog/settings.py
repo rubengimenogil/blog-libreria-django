@@ -87,9 +87,8 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'blog.wsgi.application'
-
-WSGI_APPLICATION = "api.wsgi.app"
+# WSGI para runserver/local y compatibilidad general
+WSGI_APPLICATION = 'blog.wsgi.application'
 
 
 # Database
