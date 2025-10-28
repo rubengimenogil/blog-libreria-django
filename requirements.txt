@@ -1,5 +1,5 @@
-django==5.2.7
-dj-database-url
-psycopg[binary]
-python-dotenv
-whitenoise
+django==5.2.7         # Framework web principal
+dj-database-url       # Parseo de DATABASE_URL -> dict de settings de Django
+psycopg[binary]       # Driver PostgreSQL (binario) para conectarse a Neon u otros
+python-dotenv         # Carga variables desde .env en desarrollo/local
+whitenoise            # Servir archivos estáticos en producción de forma sencilla

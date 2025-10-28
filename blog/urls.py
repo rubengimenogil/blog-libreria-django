@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Lista de rutas de alto nivel del proyecto.
+# - /admin/ apunta al panel de administración de Django.
+# - / (la raíz) la delegamos a la app `posts` para mantener responsabilidades separadas.
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('posts.urls')),

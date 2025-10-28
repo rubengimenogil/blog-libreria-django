@@ -1,3 +1,11 @@
+"""Tests básicos para la app `posts`.
+
+Para un aprendiz:
+- Cada test verifica una pieza pequeña del comportamiento.
+- `TestCase` aísla la base de datos de pruebas y la prepara/limpia automáticamente.
+- Usamos `reverse()` para resolver las URLs por nombre (más robusto que hardcodear rutas).
+"""
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone

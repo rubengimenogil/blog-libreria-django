@@ -1,3 +1,11 @@
+/*
+Hoja de estilos mínima para el blog.
+
+Para un aprendiz:
+- Cada selector aplica estilos a elementos del HTML.
+- Mantenemos reglas sencillas y legibles.
+*/
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;

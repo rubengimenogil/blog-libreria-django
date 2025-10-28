@@ -1,11 +1,16 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""Utilidad de línea de comandos de Django.
+
+Para un aprendiz:
+- Este script es el punto de entrada para comandos como `runserver`, `migrate`, `createsuperuser`, etc.
+- Configura la variable de entorno `DJANGO_SETTINGS_MODULE` y delega en Django.
+"""
 import os
 import sys
 
 
 def main():
-    """Run administrative tasks."""
+    """Arranca tareas administrativas de Django (CLI)."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blog.settings')
     try:
         from django.core.management import execute_from_command_line

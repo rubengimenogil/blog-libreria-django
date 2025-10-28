@@ -1,3 +1,4 @@
+{# Cargamos la etiqueta 'static' para resolver rutas a archivos estáticos (CSS/JS/IMG) #}
 {% load static %}
 
 <!DOCTYPE html>
@@ -5,11 +6,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Literario</title>
+    {# Enlazamos el CSS compilado/servido por Django en dev y por WhiteNoise en prod #}
     <link rel="stylesheet" href="{% static 'post/style.css' %}">
 </head>
 <body>
     <h1>Reseñas Literarias</h1>
 
+    {# Recorremos la lista de posts. Si viene vacía, mostramos un mensaje alternativo. #}
     {% for post in posts %}
     <div class="article">
         <h2>{{ post.title }}</h2>
