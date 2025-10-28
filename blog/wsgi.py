@@ -1,10 +1,10 @@
 """
-WSGI del proyecto "blog" (usado por `runserver` y servidores WSGI clásicos).
+WSGI config for blog project.
 
-En este proyecto desplegamos en Vercel con ASGI (véase `api/index.py`).
-Sin embargo, mantener WSGI configurado permite:
-- Ejecutar `manage.py runserver` en local sin cambios.
-- Compatibilidad con herramientas/hostings que aún esperen WSGI.
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 """
 
 import os

@@ -1,16 +1,5 @@
 #!/usr/bin/env python
-"""Utility de línea de comandos de Django.
-
-Casos de uso comunes:
-- `python manage.py runserver` → arranca servidor de desarrollo (WSGI).
-- `python manage.py migrate` → aplica migraciones.
-- `python manage.py createsuperuser` → crea usuario admin.
-- `python manage.py collectstatic` → compila estáticos a STATIC_ROOT.
-
-Este archivo fija DJANGO_SETTINGS_MODULE y delega en Django para ejecutar
-los comandos indicados. En este proyecto, el despliegue en Vercel usa ASGI
-desde `api/index.py`, pero mantener WSGI/CLI es clave para el flujo dev local.
-"""
+"""Django's command-line utility for administrative tasks."""
 import os
 import sys
 

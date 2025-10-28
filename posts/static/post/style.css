@@ -1,13 +1,3 @@
-/*
-  Estilos base para la página de listado del blog.
-
-  Notas de despliegue (WhiteNoise + Manifest):
-  - Este archivo se copia a STATIC_ROOT por `collectstatic`.
-  - En producción se servirá con nombre hasheado (p.ej. style.ABC123.css).
-  - No edites la salida en `staticfiles/`; los cambios deben hacerse aquí y
-    luego ejecutar `collectstatic`.
-*/
-
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;

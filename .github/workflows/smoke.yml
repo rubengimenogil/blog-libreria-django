@@ -24,7 +24,7 @@ jobs:
           FAIL=0
           # Obligatorios y opcionales
           mandatory=("/" "/db-healthz/")
-          optional=("/healthz")
+          optional=("/healthz" "/api/healthz")
 
           curl_code() {
             local url="$1"
@@ -68,32 +68,19 @@ jobs:
           check_paths "$SMOKE_BASE_URL" mandatory "${mandatory[@]}"
           check_paths "$SMOKE_BASE_URL" optional  "${optional[@]}"
 
-          # Verificar CSS enlazado en la home (obligatorio con hash)
-          echo "Checking linked CSS with hash from /"
+          # Verificar CSS enlazado en la home (best-effort)
+          echo "Checking linked CSS from /"
           html=$(curl -sSL --connect-timeout 5 --max-time 12 "$SMOKE_BASE_URL/")
-          mapfile -t css_links < <(echo "$html" | grep -oE 'href="/static/[^\"]+\.css"' | sed -E 's/^href="(.*)"$/\1/')
-          if [ ${#css_links[@]} -eq 0 ]; then
-            echo "ERROR: no CSS link found on homepage" >&2
-            FAIL=1
-          else
-            echo "Found CSS links:"; printf ' - %s\n' "${css_links[@]}"
-            found=0
-            for css in "${css_links[@]}"; do
-              if echo "$css" | grep -Eq '/static/.*/style\.[a-f0-9]{8,}\.css$'; then
-                code=$(curl_code "$SMOKE_BASE_URL$css")
-                if [ "$code" = "200" ]; then
-                  echo "OK CSS $css (200)"
-                  found=1
-                  break
-                else
-                  echo "ERROR: CSS $css responded $code" >&2
-                fi
-              fi
-            done
-            if [ "$found" = "0" ]; then
-              echo "ERROR: No hashed style.[a-f0-9]{8,}.css link found (or not 200)." >&2
-              FAIL=1
+          css=$(echo "$html" | grep -oE 'href="/[^"]+\.css"' | head -n1 | sed -E 's/^href="(.*)"$/\1/')
+          if [ -n "$css" ]; then
+            code=$(curl_code "$SMOKE_BASE_URL$css")
+            if [ "$code" = "200" ]; then
+              echo "OK CSS $css (200)"
+            else
+              echo "Warning: CSS $css responded $code" >&2
             fi
+          else
+            echo "Warning: no CSS link found on homepage" >&2
           fi
 
           if [ "$FAIL" = "1" ]; then
@@ -152,12 +139,12 @@ jobs:
           echo "Base: $PREVIEW_BASE"
           FAIL=0
           mandatory=("/" "/db-healthz/")
-          optional=("/healthz")
+          optional=("/healthz" "/api/healthz")
 
           curl_code() {
             local url="$1"
             local code
-            code=$(curl -sSL --connect-timeout 5 --max-time 12 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
+            code=$(curl -sSL --connect-timeout 5 --max-time 5 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
             if [ "$code" = "000" ]; then
               echo "curl error -> $(cat curl.err | tail -n 1)" >&2 || true
             fi

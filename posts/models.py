@@ -1,12 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Modelo de dominio principal: Post.
-#
-# Decisiones de diseño:
-# - `published_date` con auto_now_add fija la fecha al crear.
-# - Meta.ordering define orden estable de más reciente a más antiguo;
-#   en caso de empates exactos de timestamp, usa `-id` para desempatar.
-
 from django.db import models
 
 

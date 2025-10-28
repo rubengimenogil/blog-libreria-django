@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Tests mínimos de dominio y de vista.
-#
-# Estrategia:
-# - Model: __str__ y ordenación determinista.
-# - View index: renderiza, orden correcto y etiqueta <link> al CSS estático.
-# - Health: runtime y DB.
-#
-# Nota: En CI local por defecto usamos SQLite (rápido y determinista).
-#       Para probar contra Postgres (p.ej. Neon), activa USE_POSTGRES_FOR_TESTS=1
-#       y proporciona DATABASE_URL (véase workflows/ci.yml).
-
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone

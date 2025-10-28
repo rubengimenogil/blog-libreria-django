@@ -37,20 +37,13 @@ load_dotenv(BASE_DIR / ".env")  # si .env está en la raíz del repo
 # ALLOWED_HOSTS = []
 
 # --- Seguridad ---
-# SECRET_KEY: usa una segura en producción (en Vercel como variable de entorno).
 SECRET_KEY = os.getenv('SECRET_KEY', 'sdfgasdgwzw$z@3*jsf4rv&-*^9z7-m(n8$7q5ihxt*b)z1r%5^ww3^&ob')
-
-# DEBUG controlará el comportamiento de estáticos/manifest de WhiteNoise, plantillas, etc.
-# En producción: define DEBUG=False en Vercel (Settings → Environment Variables).
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-
-# Hosts por defecto seguros para local + Vercel (comodín .vercel.app cubre previews)
+# hosts por defecto seguros para local + vercel
 DEFAULT_HOSTS = ["127.0.0.1", "localhost", ".vercel.app", "blog-libreria-django.vercel.app"]
 
-# ALLOWED_HOSTS: puedes sobreescribir por env si quieres admitir más dominios.
+# permite override por env (coma-separado)ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
 ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
-
-# CSRF_TRUSTED_ORIGINS: ajusta si atiendes desde un dominio propio/https.
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
 
@@ -63,15 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # WhiteNoise integra el servidor de estáticos. Con runserver_nostatic
-    # evitamos que el staticfiles de Django interfiera en dev.
     'whitenoise.runserver_nostatic',   # opcional en dev, no molesta en prod
     'posts'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WhiteNoise debe ir lo antes posible tras SecurityMiddleware.
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,8 +103,6 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # }
 
 # --- Base de datos: PostgreSQL (Neon) ---
-# Parseamos DATABASE_URL con saneado de parámetros problemáticos (channel_binding)
-# y forzamos sslmode=require para compatibilidad en runtimes serverless.
 
 def _sanitize_db_url(u: str) -> str:
     """Elimina parámetros problemáticos (p.ej., channel_binding) y asegura sslmode=require.
@@ -196,24 +184,10 @@ USE_TZ = True
 # Archivos estáticos (CSS, JS, imágenes)
 STATIC_URL = '/static/'
 
-# En producción (Vercel) `collectstatic` escribe aquí.
+# En producción (Vercel)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Almacenamiento con fingerprint (manifest) + compresión gzip/brotli.
-# Django 5 recomienda configurar mediante STORAGES (STATICFILES_STORAGE puede ser ignorado).
-# Importante: `{% static %}` resolverá a URLs con hash cuando haya manifest (tras collectstatic).
-STORAGES = {
-    # Almacenamiento por defecto de ficheros subidos (no usado en este prototipo)
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    # Almacenamiento de estáticos (usado por collectstatic y {% static %})
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-
-# Compatibilidad retro (no debería ser necesario en Django 5+, pero no estorba):
+# Producción: archivos comprimidos con hash
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
@@ -236,12 +210,3 @@ if IS_TESTING and not USE_PG_FOR_TESTS:
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "test.sqlite3",  # archivo local para tests
     }
-
-# En entorno de tests, evita depender del manifest de estáticos para no requerir collectstatic.
-if IS_TESTING:
-    try:
-        # Ajuste del backend de estáticos durante tests
-        STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"  # type: ignore[index]
-    except Exception:
-        pass
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
