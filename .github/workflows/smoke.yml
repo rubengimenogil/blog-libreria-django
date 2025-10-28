@@ -144,7 +144,7 @@ jobs:
           curl_code() {
             local url="$1"
             local code
-            code=$(curl -sSL --connect-timeout 5 --max-time 12 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
+            code=$(curl -sSL --connect-timeout 5 --max-time 5 -o /dev/null -w "%{http_code}" "$url" 2>curl.err || echo "000")
             if [ "$code" = "000" ]; then
               echo "curl error -> $(cat curl.err | tail -n 1)" >&2 || true
             fi
