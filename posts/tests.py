@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
 from .models import Post
+from django.templatetags.static import static
 
 
 class PostModelTest(TestCase):
@@ -32,3 +33,25 @@ class PostListViewTest(TestCase):
 		# Titles should appear with p2 before p1
 		content = resp.content.decode()
 		self.assertTrue(content.index("B") < content.index("A"))
+
+	def test_index_links_correct_static_css(self):
+		# Render home and ensure the CSS href points to our static path
+		resp = self.client.get(reverse("post_list"))
+		self.assertEqual(resp.status_code, 200)
+		expected_css = static("post/style.css")
+		self.assertIn(expected_css, resp.content.decode())
+
+
+class HealthEndpointsTest(TestCase):
+	def test_healthz_ok(self):
+		resp = self.client.get(reverse("healthz"))
+		self.assertEqual(resp.status_code, 200)
+		self.assertEqual(resp.json().get("ok"), True)
+
+	def test_db_healthz_ok(self):
+		resp = self.client.get(reverse("db_healthz"))
+		self.assertEqual(resp.status_code, 200)
+		body = resp.json()
+		self.assertTrue(body.get("ok"))
+		self.assertTrue(body.get("db"))
+		self.assertEqual(body.get("result"), 1)
