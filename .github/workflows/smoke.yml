@@ -24,7 +24,7 @@ jobs:
           FAIL=0
           # Obligatorios y opcionales
           mandatory=("/" "/db-healthz/")
-          optional=("/healthz" "/api/healthz")
+          optional=("/healthz")
 
           curl_code() {
             local url="$1"
@@ -139,7 +139,7 @@ jobs:
           echo "Base: $PREVIEW_BASE"
           FAIL=0
           mandatory=("/" "/db-healthz/")
-          optional=("/healthz" "/api/healthz")
+          optional=("/healthz")
 
           curl_code() {
             local url="$1"
