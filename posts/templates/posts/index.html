@@ -1,16 +1,27 @@
 {% load static %}
+<!--
+  Plantilla principal del listado de posts.
+
+  Notas sobre estáticos:
+  - Usa la etiqueta de plantilla 'static' para generar la URL del CSS.
+  - En producción (DEBUG=False + WhiteNoise Manifest) la ruta se resolverá a un
+    nombre con hash (p.ej. /static/post/style.ABC123.css) tras 'collectstatic'.
+  - No referencies rutas “planas” a mano; siempre usa la etiqueta 'static'.
+-->
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Blog Literario</title>
+    <!-- Hoja de estilos principal del blog -->
     <link rel="stylesheet" href="{% static 'post/style.css' %}">
 </head>
 <body>
     <h1>Reseñas Literarias</h1>
 
     {% for post in posts %}
+    <!-- Cada entrada del blog -->
     <div class="article">
         <h2>{{ post.title }}</h2>
         <small>Publicado el {{ post.published_date|date:"d/m/Y H:i" }}</small>
